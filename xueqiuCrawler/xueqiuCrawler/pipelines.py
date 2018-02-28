@@ -8,6 +8,7 @@
 from scrapy.conf import settings
 import pymongo
 from scrapy.exceptions import DropItem
+import redis
 
 class XueqiucrawlerPipeline(object):
     def process_item(self, item, spider):
@@ -15,33 +16,32 @@ class XueqiucrawlerPipeline(object):
 
 class DuplicatesPipeline(object):
     def __init__(self):
-        id_list = []
-        with open('set_file.csv', 'r') as f:
-            for id in f.readlines():
-                id = id.strip()
-                id_list.append(id)
-        self.ids_seen = set(id_list)
+        host = settings['REDIS_HOST']
+        port = settings['REDIS_PORT']
+        db = 0
+        self.redis_db = redis.Redis(host=host, port=port, db=db)
+        self.redis_data_dict = "Mongodb_Item_Data"
+
+        host = settings['MONGODB_HOST']
+        port = settings['MONGODB_PORT']
+        dbName = settings['MONGODB_DBNAME']
+        col = settings['MONGODB_COLLECTION']
+        client = pymongo.MongoClient(host=host, port=port)
+        db = client[dbName]
+        mongodb_data = db[col].find({}, {"user_id":1})
+
+        self.redis_db.flushdb() # 将redis中的数据进行清空
+        if self.redis_db.hlen(self.redis_data_dict) == 0:
+            for userId_dict in mongodb_data:
+                # 将mongodb中的数据插入到redis数据库中
+                self.redis_db.hset(self.redis_data_dict, userId_dict['user_id'], 0)
+        client.close()
 
     def process_item(self, item, spider):
-        set_size = len(self.ids_seen)
-
-        if set_size%3 == 0:
-            # 备份set中的数据
-            with open('set_file.csv', 'w') as f:
-                for id in self.ids_seen:
-                    f.write("%s\n" % str(id))
-
-            # 在备份set的同时，将最新的id保存，便于在中断爬虫后，从断点启动
-            with open('stop_log.csv', 'w') as f:
-                f.write("%s\n" % str(item['user_id']))
-
-        if set_size%10 == 0:
-            print("there are %d items in the database" % set_size)
-
-        if item['user_id'] in self.ids_seen:
+        # 如果该item已经在redis中出现了，那么丢弃
+        if self.redis_db.hexists(self.redis_data_dict, item['user_id']):
             raise DropItem("Duplicate item found: %s" % item)
         else:
-            self.ids_seen.add(item['user_id'])
             return item
 
 class MongoPipeline(object):

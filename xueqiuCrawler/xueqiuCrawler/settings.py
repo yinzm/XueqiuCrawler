@@ -91,8 +91,8 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # 'xueqiuCrawler.pipelines.XueqiucrawlerPipeline': 300,
-   #  'xueqiuCrawler.pipelines.DuplicatesPipeline': 300,
-    # 'xueqiuCrawler.pipelines.MongoPipeline': 400,
+    'xueqiuCrawler.pipelines.DuplicatesPipeline': 300,
+    'xueqiuCrawler.pipelines.MongoPipeline': 400,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
