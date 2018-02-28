@@ -24,8 +24,7 @@ MONGODB_COLLECTION = "xueqiu"
 #
 SCHEDULER = 'xueqiuCrawler.scrapy_redis.scheduler.Scheduler'
 SCHEDULER_PERSIST = True
-# SCHEDULER_QUEUE_CLASS = 'xueqiuCrawler.scrapy_redis.queue.SpiderPriorityQueue'
-SCHEDULER_QUEUE_CLASS = 'xueqiuCrawler.scrapy_redis.queue.SpiderSimpleQueue'
+SCHEDULER_QUEUE_CLASS = 'xueqiuCrawler.scrapy_redis.queue.SpiderPriorityQueue'
 
 # 种子队列的信息
 REDIE_URL = None

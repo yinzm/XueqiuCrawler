@@ -23,17 +23,6 @@ class XueqiuSpider(RedisSpider):
         "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         "Cookie": "device_id=288387fa2efe85a6e006edc54a5eda57; s=fp1157htg6; bid=b7785bba313ecf158609498a2d9f49bf_jcjuxw50; __utmz=1.1516242744.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); remember=1; remember.sig=K4F3faYzmVuqC0iXIERCQf55g2Y; xq_a_token=aae1db46abe1e1ed71f6fea88fde2ed306c64063; xq_a_token.sig=rHnC-h2pvBo_iFv1RBKNQsaUc6U; xq_r_token=8ef08c78aefc61aa9394f163640e68c81d338b99; xq_r_token.sig=tDqW3wGLsJBSypal5tKrNYGkbAw; xq_is_login=1; xq_is_login.sig=J3LxgPVPUzbBg3Kee_PquUfih7Q; u=6507446955; u.sig=cSuuCuFU_r2EmTKvwOFMewzKcyI; aliyungf_tc=AQAAAPnKBHOEaw4AomIYdLQ43IMpgjBu; __utmc=1; Hm_lvt_1db88642e346389874251b5a1eded6e3=1517973487,1519619536,1519715701,1519727668; __utma=1.1764713070.1516242744.1519715704.1519727671.7; __utmt=1; __utmb=1.1.10.1519727671; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1519727795",
     }
-    # 在粉丝页面用的header
-    my_header2 = {
-        "Host": "xueqiu.com",
-        "Connection": "keep-alive",
-        "Accept": "application/json, text/plain, */*",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36",
-        "Referer": "https://xueqiu.com/u/5762889842",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Cookie": "device_id=288387fa2efe85a6e006edc54a5eda57; s=fp1157htg6; bid=b7785bba313ecf158609498a2d9f49bf_jcjuxw50; __utmz=1.1516242744.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); remember=1; remember.sig=K4F3faYzmVuqC0iXIERCQf55g2Y; xq_a_token=aae1db46abe1e1ed71f6fea88fde2ed306c64063; xq_a_token.sig=rHnC-h2pvBo_iFv1RBKNQsaUc6U; xq_r_token=8ef08c78aefc61aa9394f163640e68c81d338b99; xq_r_token.sig=tDqW3wGLsJBSypal5tKrNYGkbAw; xq_is_login=1; xq_is_login.sig=J3LxgPVPUzbBg3Kee_PquUfih7Q; u=6507446955; u.sig=cSuuCuFU_r2EmTKvwOFMewzKcyI; aliyungf_tc=AQAAAPnKBHOEaw4AomIYdLQ43IMpgjBu; __utmc=1; Hm_lvt_1db88642e346389874251b5a1eded6e3=1517973487,1519619536,1519715701,1519727668; __utma=1.1764713070.1516242744.1519715704.1519727671.7; __utmt=1; __utmb=1.1.10.1519727671; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1519727673",
-    }
     def start_requests(self):
         for url in XueqiuSpider.start_urls:
             yield scrapy.Request(
@@ -67,7 +56,7 @@ class XueqiuSpider(RedisSpider):
             url = url_str.format(user_id=current_id)
             yield scrapy.Request(
                 url=url,
-                headers=XueqiuSpider.my_header2,
+                headers=XueqiuSpider.my_header,
                 callback=self.parse2, # 收集所有的粉丝
                 meta={'user_id': current_id}
             )
@@ -132,7 +121,7 @@ class XueqiuSpider(RedisSpider):
 
             yield scrapy.Request(
                 url=next_url,
-                headers=XueqiuSpider.my_header2,
+                headers=XueqiuSpider.my_header,
                 callback=self.parse2,
                 meta={'user_id': current_id}  # 仍然是当前用户的id
             )
