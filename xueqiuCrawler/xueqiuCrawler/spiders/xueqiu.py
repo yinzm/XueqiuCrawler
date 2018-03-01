@@ -8,8 +8,8 @@ from xueqiuCrawler.scrapy_redis.spiders import RedisSpider
 class XueqiuSpider(RedisSpider):
     name = 'xueqiu'
     allowed_domains = ['xueqiu.com']
-    start_urls = ['https://xueqiu.com/friendships/groups/members.json?uid=5762889842&page=1&gid=0']
-    first_user_id = 5762889842
+    start_urls = ['https://xueqiu.com/friendships/groups/members.json?uid=3386345727&page=1&gid=0']
+    first_user_id = 3386345727
     id_queue = deque() # 层次遍历所有的用户
     # 在关注页面用的header
     my_header = {
