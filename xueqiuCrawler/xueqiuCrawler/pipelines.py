@@ -22,21 +22,6 @@ class DuplicatesPipeline(object):
         self.redis_db = redis.Redis(host=host, port=port, db=db)
         self.redis_data_dict = "Mongodb_Item_Data"
 
-        host = settings['MONGODB_HOST']
-        port = settings['MONGODB_PORT']
-        dbName = settings['MONGODB_DBNAME']
-        col = settings['MONGODB_COLLECTION']
-        client = pymongo.MongoClient(host=host, port=port)
-        db = client[dbName]
-        mongodb_data = db[col].find({}, {"user_id":1})
-
-        self.redis_db.flushdb() # 将redis中的数据进行清空
-        if self.redis_db.hlen(self.redis_data_dict) == 0:
-            for userId_dict in mongodb_data:
-                # 将mongodb中的数据插入到redis数据库中
-                self.redis_db.hset(self.redis_data_dict, userId_dict['user_id'], 0)
-        client.close()
-
     def process_item(self, item, spider):
         # 如果该item已经在redis中出现了，那么丢弃
         if self.redis_db.hexists(self.redis_data_dict, item['user_id']):
